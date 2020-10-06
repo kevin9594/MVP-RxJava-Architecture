@@ -1,0 +1,2 @@
+rootProject.name='MVP-RxJava-Architecture'
+include ':app'
