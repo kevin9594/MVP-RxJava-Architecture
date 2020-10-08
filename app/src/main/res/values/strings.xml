@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">MVP-RxJava-Architecture</string>
+
+    <string name="title">MVP-RxJava-Architecture</string>
+
+    <string name="toast_network_is_unavailable">請先連上網路</string>
+
+
+    <string name="tab_title_sign_in">SignIn</string>
+    <string name="tab_title_city_list">CityList</string>
+
+
 </resources>
