@@ -26,11 +26,13 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
 
     }
 
-    private var cityListAdapter: CityListAdapter? = null
-
     private var cityListBean: MutableList<CityListBean> = mutableListOf()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_city_list, container, false)
     }
 
@@ -42,9 +44,15 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
     }
 
     private fun setAdapter() {
-        rv_city_list.layoutManager = LinearLayoutManager(activity)
-        cityListAdapter = CityListAdapter(activity!!, cityListBean)
-        rv_city_list.adapter = cityListAdapter
+        rv_city_list.apply {
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = CityListAdapter(requireActivity(), cityListBean)
+        }
+
+        rv_city_list2.apply {
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = CityListAdapter(requireActivity(), cityListBean)
+        }
     }
 
 
@@ -59,7 +67,9 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
             cityListBean.addAll(dataBeanList)
         }
 
-        cityListAdapter?.notifyDataSetChanged()
+        rv_city_list.adapter?.notifyDataSetChanged()
+
+        rv_city_list2.adapter?.notifyDataSetChanged()
     }
 
 
