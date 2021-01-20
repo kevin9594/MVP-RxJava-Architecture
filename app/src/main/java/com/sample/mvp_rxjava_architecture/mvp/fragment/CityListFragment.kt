@@ -7,6 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sample.mvp_rxjava_architecture.R
 import com.sample.mvp_rxjava_architecture.adapter.CityListAdapter
@@ -21,9 +24,7 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
     CityListContract.View {
 
     companion object {
-
-        var title = R.string.tab_title_city_list
-
+        const val title = R.string.tab_title_city_list
     }
 
     private var cityListBean: MutableList<CityListBean> = mutableListOf()
@@ -47,6 +48,10 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
         rv_city_list.apply {
             layoutManager = LinearLayoutManager(requireActivity())
             adapter = CityListAdapter(requireActivity(), cityListBean)
+            val itemDecoration = DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL)
+            itemDecoration.setDrawable(getDrawable(requireActivity(), R.drawable.divider)!!)
+            addItemDecoration(itemDecoration)
+
         }
 
         rv_city_list2.apply {
@@ -62,14 +67,11 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
 
 
     override fun success(dataBeanList: MutableList<CityListBean>) {
-        if (dataBeanList.isNotEmpty()) {
-            Log.d("[debug]", "${dataBeanList.size}")
-            cityListBean.addAll(dataBeanList)
+        dataBeanList.let {
+            cityListBean.addAll(it)
+            rv_city_list.adapter?.notifyDataSetChanged()
+            rv_city_list2.adapter?.notifyDataSetChanged()
         }
-
-        rv_city_list.adapter?.notifyDataSetChanged()
-
-        rv_city_list2.adapter?.notifyDataSetChanged()
     }
 
 
