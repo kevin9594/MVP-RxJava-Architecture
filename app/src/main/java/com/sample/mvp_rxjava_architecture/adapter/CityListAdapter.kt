@@ -1,24 +1,25 @@
 package com.sample.mvp_rxjava_architecture.adapter
 
-import android.annotation.SuppressLint
-import android.content.Context
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sample.mvp_rxjava_architecture.R
 import com.sample.mvp_rxjava_architecture.bean.CityListBean
 
-class CityListAdapter() : RecyclerView.Adapter<CityListAdapter.ViewHolder>()  {
+class CityListAdapter : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
 
-    var context: Context? = null
-    var cityListBean: MutableList<CityListBean>? = null
 
-    constructor(context: Context, cityListBean: MutableList<CityListBean>) : this() {
-        this.context = context
-        this.cityListBean = cityListBean
-    }
+    var cityList: MutableList<CityListBean> = mutableListOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,23 +28,48 @@ class CityListAdapter() : RecyclerView.Adapter<CityListAdapter.ViewHolder>()  {
 
 
     override fun getItemCount(): Int {
-       return cityListBean!!.size
+        return cityList.size
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindModel(cityListBean!![position])
+        holder.bindModel(cityList[position])
     }
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        val tv_city = itemView.findViewById<TextView>(R.id.tv_city)!!
+        private val tvCity = itemView.findViewById<TextView>(R.id.tv_city)!!
+        private val etInput = itemView.findViewById<EditText>(R.id.et_input)!!
 
         fun bindModel(cityListBean: CityListBean) {
-            tv_city.text = cityListBean.city
+
+            if (etInput.tag is TextWatcher) {
+                etInput.removeTextChangedListener(etInput.tag as TextWatcher)
+            }
+
+            etInput.setText(cityListBean.provinceId)
+
+            tvCity.text = cityListBean.city
+
+            val tw = object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    if (TextUtils.isEmpty(s.toString())) {
+                        cityListBean.provinceId = ""
+                    } else {
+                        cityListBean.provinceId = s.toString()
+                    }
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            }
+
+            etInput.addTextChangedListener(tw)
+            etInput.tag = tw
         }
     }
-
-
 }
+
+

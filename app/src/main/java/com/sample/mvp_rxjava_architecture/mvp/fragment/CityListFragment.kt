@@ -27,7 +27,9 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
         const val title = R.string.tab_title_city_list
     }
 
-    private var cityListBean: MutableList<CityListBean> = mutableListOf()
+    private var topAdapter = CityListAdapter()
+
+    private var bottomAdapter = CityListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,21 +44,20 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
         super.onViewCreated(view, savedInstanceState)
         setAdapter()
         mPresenter?.getData()
+
+        v_click.setOnClickListener {
+           Toast.makeText(requireContext(),  topAdapter.cityList[0].provinceId, Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun setAdapter() {
         rv_city_list.apply {
             layoutManager = LinearLayoutManager(requireActivity())
-            adapter = CityListAdapter(requireActivity(), cityListBean)
+            adapter = topAdapter
             val itemDecoration = DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL)
             itemDecoration.setDrawable(getDrawable(requireActivity(), R.drawable.divider)!!)
             addItemDecoration(itemDecoration)
-
-        }
-
-        rv_city_list2.apply {
-            layoutManager = LinearLayoutManager(requireActivity())
-            adapter = CityListAdapter(requireActivity(), cityListBean)
         }
     }
 
@@ -68,9 +69,8 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
 
     override fun success(dataBeanList: MutableList<CityListBean>) {
         dataBeanList.let {
-            cityListBean.addAll(it)
-            rv_city_list.adapter?.notifyDataSetChanged()
-            rv_city_list2.adapter?.notifyDataSetChanged()
+            topAdapter.cityList = it
+            bottomAdapter.cityList = it
         }
     }
 
