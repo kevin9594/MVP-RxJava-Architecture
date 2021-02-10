@@ -44,6 +44,13 @@ class CityListAdapter : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
 
         fun bindModel(cityListBean: CityListBean) {
 
+            /**
+             * 移除輸入監聽
+             * 設定初始狀態
+             * 載入各欄位
+             * 加入輸入監聽 (輸入內容帶入LiveData)
+             **/
+
             if (etInput.tag is TextWatcher) {
                 etInput.removeTextChangedListener(etInput.tag as TextWatcher)
             }
