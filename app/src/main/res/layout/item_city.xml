@@ -19,6 +19,15 @@
             android:text="city"
             android:textSize="20sp" />
 
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="@dimen/horizontal_margin"
+            android:layout_toEndOf="@+id/tv_city"
+            android:gravity="center"
+            android:text="status" />
+
     </RelativeLayout>
 
     <EditText
@@ -42,7 +51,7 @@
         android:paddingStart="@dimen/horizontal_margin"
         android:text="即時訊息"
         android:textColor="@color/white"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_button"

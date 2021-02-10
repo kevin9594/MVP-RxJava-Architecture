@@ -14,4 +14,9 @@ data class CityListBean(
 ) {
     var input: String? = null
     var change: Boolean = false
+    var status: Status = Status.SAME
+}
+
+enum class Status{
+    SMALLER, SAME, LARGER
 }

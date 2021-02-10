@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.sample.mvp_rxjava_architecture.R
 import com.sample.mvp_rxjava_architecture.bean.CityListBean
+import com.sample.mvp_rxjava_architecture.bean.Status
 
 class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
 
@@ -45,6 +46,7 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val tvCity = itemView.findViewById<TextView>(R.id.tv_city)
+        private val tvStatus = itemView.findViewById<TextView>(R.id.tv_status)
         private val tvButton = itemView.findViewById<TextView>(R.id.tv_button)
         private val tvWarning = itemView.findViewById<TextView>(R.id.tv_warning)
         private val etInput = itemView.findViewById<EditText>(R.id.et_input)
@@ -85,8 +87,17 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
             }
             etInput.onFocusChangeListener = null
 
-            /*載入各欄位*/
+            /*載入各欄位 初始狀態*/
             tvCity.text = cityListBean.city
+            tvButton.setBackgroundResource(R.color.select_button)
+            tvWarning.visibility = View.GONE
+            tvStatus.setBackgroundColor(0)
+            if (cityListBean.status == Status.LARGER || cityListBean.status == Status.SMALLER) {
+                tvButton.text = "變動後送出"
+            } else {
+                tvButton.text = "送出"
+            }
+
 
             /*先載入輸入內容 再判斷各原件狀態*/
             etInput.setText(cityListBean.input)
@@ -98,7 +109,7 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
                 etInput.setSelection(etInput.text.length)
             }
 
-
+            /*監聽設定*/
             val tw = object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     check(s.toString(), cityListBean)
@@ -116,7 +127,6 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
 
             val fc = View.OnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
-                    Log.d("[test]", "hasFocus => $position")
                     etInput.requestFocus()
                     focusPosition = position
                 } else {
@@ -128,27 +138,34 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
             etInput.addTextChangedListener(tw)
             etInput.tag = tw
 
-            if(cityListBean.change){
-                tvButton.setBackgroundColor(itemView.context.getColor(R.color.red))
-                tvButton.text = "變動後送出"
-                tvWarning.visibility = View.VISIBLE
-            }else{
-                tvButton.setBackgroundResource(R.color.select_button)
-                tvButton.text = "送出"
-                tvWarning.visibility = View.GONE
-            }
 
-            Handler().postDelayed({
-
-                tvWarning.visibility = View.GONE
-
-                Log.d("[test]", "set select_button")
-                //復原按鈕
-                tvButton.setBackgroundResource(R.color.select_button)
-
+            /*即時更新判斷*/
+            if (cityListBean.change) {
                 //復原狀態
                 cityListBean.change = false
-            },3000)
+
+                //暫時變更UI
+                tvButton.setBackgroundColor(itemView.context.getColor(R.color.red))
+                tvWarning.visibility = View.VISIBLE
+                when (cityListBean.status) {
+
+                    Status.LARGER -> {
+                        tvStatus.setBackgroundColor(itemView.context.getColor(R.color.green))
+                    }
+                    Status.SMALLER -> {
+                        tvStatus.setBackgroundColor(itemView.context.getColor(R.color.red))
+                    }
+                    else -> {
+                    }
+                }
+
+                //三秒後復原UI
+                Handler().postDelayed({
+                    tvButton.setBackgroundResource(R.color.select_button)
+                    tvWarning.visibility = View.GONE
+                    tvStatus.setBackgroundColor(0)
+                }, 3000)
+            }
 
 
             //test

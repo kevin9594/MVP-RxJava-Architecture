@@ -16,6 +16,7 @@ import com.sample.mvp_rxjava_architecture.adapter.CityListAdapter
 import com.sample.mvp_rxjava_architecture.base.BaseFragment
 import com.sample.mvp_rxjava_architecture.base.BasePresenterFragment
 import com.sample.mvp_rxjava_architecture.bean.CityListBean
+import com.sample.mvp_rxjava_architecture.bean.Status
 import com.sample.mvp_rxjava_architecture.mvp.contract.CityListContract
 import com.sample.mvp_rxjava_architecture.mvp.presenter.CityListPresenter
 import kotlinx.android.synthetic.main.fragment_city_list.*
@@ -48,10 +49,12 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
 
         v_refresh.setOnClickListener {
 
-            for (i in topAdapter.cityList.indices){
-                if(i == 0 || i == 2)
-                topAdapter.cityList[i].change = true
-            }
+            topAdapter.cityList[0].status = Status.LARGER
+            topAdapter.cityList[0].change = true
+
+            topAdapter.cityList[2].status = Status.SMALLER
+            topAdapter.cityList[2].change = true
+
 
             topAdapter.notifyDataSetChanged()
 
@@ -88,15 +91,8 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
     }
 
     override fun save() {
-
         /*保存至repository*/
         defaultList = topAdapter.cityList
-
-        defaultList.forEach {
-            Log.d("[test]", " => ${it.input}")
-        }
-
-
     }
 
 }
