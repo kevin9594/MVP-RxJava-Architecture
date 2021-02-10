@@ -3,6 +3,7 @@ package com.sample.mvp_rxjava_architecture.adapter
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,9 +77,10 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
              * 加入輸入監聽 (輸入內容帶入LiveData)
              **/
 
-            /*移除輸入監聽*/
+            /*移除輸入、焦點監聽*/
             if (etInput.tag is TextWatcher) {
                 etInput.removeTextChangedListener(etInput.tag as TextWatcher)
+                etInput.onFocusChangeListener = null
             }
 
             /*載入各欄位*/
@@ -112,6 +114,7 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
 
             val fc = View.OnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
+                    Log.d("[test]", "hasFocus => $position")
                     etInput.requestFocus()
                     focusPosition = position
                 } else {
@@ -123,6 +126,7 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
             etInput.addTextChangedListener(tw)
             etInput.tag = tw
 
+            //test
             tvButton.setOnClickListener {
                 Toast.makeText(itemView.context, "click $position", Toast.LENGTH_SHORT).show()
             }
