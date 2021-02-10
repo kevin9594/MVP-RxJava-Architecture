@@ -20,16 +20,13 @@ import com.sample.mvp_rxjava_architecture.mvp.contract.CityListContract
 import com.sample.mvp_rxjava_architecture.mvp.presenter.CityListPresenter
 import kotlinx.android.synthetic.main.fragment_city_list.*
 
-class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPresenter>(),
-    CityListContract.View {
+class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPresenter>(), CityListContract.View, CityListAdapter.Listener {
 
     companion object {
         const val title = R.string.tab_title_city_list
     }
 
-    private var topAdapter = CityListAdapter()
-
-    private var bottomAdapter = CityListAdapter()
+    private var topAdapter = CityListAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +43,7 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
         mPresenter?.getData()
 
         v_click.setOnClickListener {
-           Toast.makeText(requireContext(),  topAdapter.cityList[0].provinceId, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), topAdapter.cityList[0].provinceId, Toast.LENGTH_SHORT).show()
         }
 
     }
@@ -67,16 +64,28 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
     }
 
 
+    private var defaultList: MutableList<CityListBean> = mutableListOf()
     override fun success(dataBeanList: MutableList<CityListBean>) {
         dataBeanList.let {
             topAdapter.cityList = it
-            bottomAdapter.cityList = it
         }
     }
 
 
     override fun fail(message: String) {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun save() {
+
+        /*保存至repository*/
+        defaultList = topAdapter.cityList
+
+        defaultList.forEach {
+            Log.d("[test]", " => ${it.provinceId}")
+        }
+
+
     }
 
 }

@@ -8,11 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.sample.mvp_rxjava_architecture.R
 import com.sample.mvp_rxjava_architecture.bean.CityListBean
 
-class CityListAdapter : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
+class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
 
 
     var cityList: MutableList<CityListBean> = mutableListOf()
@@ -20,6 +21,8 @@ class CityListAdapter : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
             field = value
             notifyDataSetChanged()
         }
+
+    var focusPosition = -1
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,50 +36,106 @@ class CityListAdapter : RecyclerView.Adapter<CityListAdapter.ViewHolder>() {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindModel(cityList[position])
+        holder.bindModel(cityList[position], position)
     }
 
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val tvCity = itemView.findViewById<TextView>(R.id.tv_city)!!
-        private val etInput = itemView.findViewById<EditText>(R.id.et_input)!!
+        private val tvCity = itemView.findViewById<TextView>(R.id.tv_city)
+        private val tvButton = itemView.findViewById<TextView>(R.id.tv_button)
+        private val etInput = itemView.findViewById<EditText>(R.id.et_input)
 
-        fun bindModel(cityListBean: CityListBean) {
+        private fun check(input: String, cityListBean: CityListBean) {
+
+            if (TextUtils.isEmpty(input)) {
+
+                etInput.setBackgroundResource(R.drawable.select_background)
+                tvButton.isEnabled = true
+
+            } else if (input.toInt() >= 100 || input.toInt() <= 9) {
+
+                etInput.setBackgroundResource(R.drawable.border_error)
+                tvButton.isEnabled = false
+
+            } else {
+
+                etInput.setBackgroundResource(R.drawable.select_background)
+                tvButton.isEnabled = true
+
+            }
+
+        }
+
+        fun bindModel(cityListBean: CityListBean, position: Int) {
 
             /**
              * 移除輸入監聽
-             * 設定初始狀態
              * 載入各欄位
+             * 設定初始狀態
              * 加入輸入監聽 (輸入內容帶入LiveData)
              **/
 
+            /*移除輸入監聽*/
             if (etInput.tag is TextWatcher) {
                 etInput.removeTextChangedListener(etInput.tag as TextWatcher)
             }
 
-            etInput.setText(cityListBean.provinceId)
-
+            /*載入各欄位*/
             tvCity.text = cityListBean.city
+
+            /*先載入輸入內容 再判斷各原件狀態*/
+            etInput.setText(cityListBean.input)
+            check(etInput.text.toString(), cityListBean)
+
+            /*判斷輸入框是否是當前焦點*/
+            if (position == focusPosition) {
+                etInput.requestFocus()
+                etInput.setSelection(etInput.text.length)
+            }
+
 
             val tw = object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
+                    check(s.toString(), cityListBean)
                     if (TextUtils.isEmpty(s.toString())) {
-                        cityListBean.provinceId = ""
+                        cityListBean.input = ""
                     } else {
-                        cityListBean.provinceId = s.toString()
+                        cityListBean.input = s.toString()
                     }
+                    listener.save()
                 }
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             }
 
+            val fc = View.OnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    etInput.requestFocus()
+                    focusPosition = position
+                } else {
+                    etInput.clearFocus()
+                }
+            }
+
+            etInput.onFocusChangeListener = fc
             etInput.addTextChangedListener(tw)
             etInput.tag = tw
+
+            tvButton.setOnClickListener {
+                Toast.makeText(itemView.context, "click $position", Toast.LENGTH_SHORT).show()
+            }
+
         }
     }
+
+
+    interface Listener {
+        fun save()
+    }
+
+
 }
 
 
