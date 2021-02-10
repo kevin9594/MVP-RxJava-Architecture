@@ -82,7 +82,7 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
         defaultList = topAdapter.cityList
 
         defaultList.forEach {
-            Log.d("[test]", " => ${it.provinceId}")
+            Log.d("[test]", " => ${it.input}")
         }
 
 

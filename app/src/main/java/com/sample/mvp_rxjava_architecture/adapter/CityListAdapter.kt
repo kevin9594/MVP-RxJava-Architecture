@@ -80,8 +80,8 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
             /*移除輸入、焦點監聽*/
             if (etInput.tag is TextWatcher) {
                 etInput.removeTextChangedListener(etInput.tag as TextWatcher)
-                etInput.onFocusChangeListener = null
             }
+            etInput.onFocusChangeListener = null
 
             /*載入各欄位*/
             tvCity.text = cityListBean.city
@@ -128,7 +128,7 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
 
             //test
             tvButton.setOnClickListener {
-                Toast.makeText(itemView.context, "click $position", Toast.LENGTH_SHORT).show()
+                Toast.makeText(itemView.context, "click ${etInput.text}", Toast.LENGTH_SHORT).show()
             }
 
         }
