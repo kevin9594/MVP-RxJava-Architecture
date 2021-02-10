@@ -1,5 +1,6 @@
 package com.sample.mvp_rxjava_architecture.adapter
 
+import android.os.Handler
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -45,6 +46,7 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
 
         private val tvCity = itemView.findViewById<TextView>(R.id.tv_city)
         private val tvButton = itemView.findViewById<TextView>(R.id.tv_button)
+        private val tvWarning = itemView.findViewById<TextView>(R.id.tv_warning)
         private val etInput = itemView.findViewById<EditText>(R.id.et_input)
 
         private fun check(input: String, cityListBean: CityListBean) {
@@ -125,6 +127,29 @@ class CityListAdapter(private val listener: Listener) : RecyclerView.Adapter<Cit
             etInput.onFocusChangeListener = fc
             etInput.addTextChangedListener(tw)
             etInput.tag = tw
+
+            if(cityListBean.change){
+                tvButton.setBackgroundColor(itemView.context.getColor(R.color.red))
+                tvButton.text = "變動後送出"
+                tvWarning.visibility = View.VISIBLE
+            }else{
+                tvButton.setBackgroundResource(R.color.select_button)
+                tvButton.text = "送出"
+                tvWarning.visibility = View.GONE
+            }
+
+            Handler().postDelayed({
+
+                tvWarning.visibility = View.GONE
+
+                Log.d("[test]", "set select_button")
+                //復原按鈕
+                tvButton.setBackgroundResource(R.color.select_button)
+
+                //復原狀態
+                cityListBean.change = false
+            },3000)
+
 
             //test
             tvButton.setOnClickListener {

@@ -46,6 +46,17 @@ class CityListFragment : BasePresenterFragment<CityListContract.View, CityListPr
             Toast.makeText(requireContext(), topAdapter.cityList[0].provinceId, Toast.LENGTH_SHORT).show()
         }
 
+        v_refresh.setOnClickListener {
+
+            for (i in topAdapter.cityList.indices){
+                if(i == 0 || i == 2)
+                topAdapter.cityList[i].change = true
+            }
+
+            topAdapter.notifyDataSetChanged()
+
+        }
+
     }
 
     private fun setAdapter() {

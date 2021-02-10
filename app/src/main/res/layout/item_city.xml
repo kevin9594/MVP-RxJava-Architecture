@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,RtlSymmetry">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,23 +25,34 @@
         android:id="@+id/et_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="請輸入"
-        android:padding="@dimen/horizontal_margin"
-        android:layout_marginBottom="@dimen/vertical_margin"
         android:layout_marginStart="@dimen/horizontal_margin"
         android:layout_marginEnd="@dimen/horizontal_margin"
+        android:layout_marginBottom="@dimen/vertical_margin"
+        android:background="@drawable/select_background"
+        android:hint="請輸入"
         android:inputType="number"
-        android:background="@drawable/select_background"/>
+        android:padding="@dimen/horizontal_margin" />
+
+    <TextView
+        android:id="@+id/tv_warning"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@color/red"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/horizontal_margin"
+        android:text="即時訊息"
+        android:textColor="@color/white"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_button"
-        android:background="@color/select_button"
         android:layout_width="120dp"
-        android:textColor="@color/white"
-        android:text="送出"
+        android:layout_height="50dp"
+        android:background="@color/select_button"
         android:gravity="center"
-        android:textSize="18sp"
-        android:layout_height="50dp"/>
+        android:text="送出"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
 
 </LinearLayout>

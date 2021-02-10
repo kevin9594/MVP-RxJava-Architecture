@@ -13,4 +13,5 @@ data class CityListBean(
     var areas: Any? = null
 ) {
     var input: String? = null
+    var change: Boolean = false
 }
