@@ -3,6 +3,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:id="@+id/edit_text"
+            android:layout_width="match_parent"
+            android:focusable="false"
+            android:background="@color/red"
+            android:focusableInTouchMode="false"
+            android:layout_height="48dp"/>
+
+        <EditText
+            android:id="@+id/edit_text2"
+            android:layout_width="match_parent"
+            android:focusable="false"
+            android:background="@color/green"
+            android:focusableInTouchMode="false"
+            android:layout_height="48dp"/>
+
+    </LinearLayout>
+
+
+
     <Button
         android:id="@+id/bt_sign_in"
         android:layout_width="128dp"
@@ -18,6 +44,32 @@
         android:text=""
         android:layout_marginTop="@dimen/vertical_margin"
         android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/light_gray"
+            android:text="close"
+            android:gravity="center"/>
+
+        <android.inputmethodservice.KeyboardView
+            android:id="@+id/kv_keyboard"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:keyBackground="@android:color/holo_purple"
+            android:keyTextColor="#333333"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
 
 
 

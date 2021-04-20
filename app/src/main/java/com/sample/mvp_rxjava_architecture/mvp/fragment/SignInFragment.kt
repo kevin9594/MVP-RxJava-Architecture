@@ -2,6 +2,7 @@ package com.sample.mvp_rxjava_architecture.mvp.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.sample.mvp_rxjava_architecture.base.BasePresenterFragment
 import com.sample.mvp_rxjava_architecture.bean.SignBean
 import com.sample.mvp_rxjava_architecture.mvp.contract.SignContract
 import com.sample.mvp_rxjava_architecture.mvp.presenter.SignPresenter
+import com.sample.mvp_rxjava_architecture.util.KeyBoardUtil
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
 class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>(), SignContract.View, View.OnClickListener {
@@ -21,6 +23,9 @@ class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>()
 
     }
 
+    var count = 0
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sign_in, container, false)
     }
@@ -29,6 +34,8 @@ class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bt_sign_in.setOnClickListener(this)
+        edit_text.setOnClickListener(this)
+        edit_text2.setOnClickListener(this)
     }
 
 
@@ -52,7 +59,22 @@ class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>()
     override fun onClick(v: View?) {
 
         when (v) {
-            bt_sign_in -> mPresenter?.getData("Michael Jordan", "a123")
+            bt_sign_in -> {
+
+                count++
+                edit_text.setText("$count")
+
+//                mPresenter?.getData("Michael Jordan", "a123")
+            }
+            edit_text -> {
+                Log.d("tag", "click")
+                KeyBoardUtil(kv_keyboard, edit_text).showKeyboard()
+            }
+
+            edit_text2 ->{
+                KeyBoardUtil(kv_keyboard, edit_text2).showKeyboard()
+            }
+
         }
 
     }
