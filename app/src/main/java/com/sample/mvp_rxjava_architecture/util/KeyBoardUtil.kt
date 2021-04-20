@@ -1,18 +1,16 @@
 package com.sample.mvp_rxjava_architecture.util
 
 import android.inputmethodservice.Keyboard
-import android.inputmethodservice.KeyboardView
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import com.sample.mvp_rxjava_architecture.R
+import com.sample.mvp_rxjava_architecture.widget.CustomKeyBoardView
 
-class KeyBoardUtil(keyboardView: KeyboardView, editText: EditText) {
-    private val keyboardView: KeyboardView
-    private val editText: EditText
-    private val keyboard // 自定义键盘
-            : Keyboard? = null
+class KeyBoardUtil(private val keyboardView: CustomKeyBoardView, private val editText: EditText) {
+
+    private val keyboard: Keyboard? = Keyboard(editText.context, R.xml.keyboard)
     private val listener: OnKeyboardActionListener = object : OnKeyboardActionListener {
         override fun swipeUp() {}
         override fun swipeRight() {}
@@ -25,13 +23,13 @@ class KeyBoardUtil(keyboardView: KeyboardView, editText: EditText) {
             val editable = editText.text
             val start = editText.selectionStart
             when (primaryCode) {
-                Keyboard.KEYCODE_DELETE -> if (editable != null && editable.length > 0) {
+                Keyboard.KEYCODE_DELETE -> if (editable != null && editable.isNotEmpty()) {
                     if (start > 0) {
                         editable.delete(start - 1, start)
                     }
                 }
                 Keyboard.KEYCODE_CANCEL -> keyboardView.visibility = View.GONE
-                else -> editable!!.insert(start, Character.toString(primaryCode.toChar()))
+                else -> editable!!.insert(start, primaryCode.toChar().toString())
             }
         }
     }
@@ -48,18 +46,18 @@ class KeyBoardUtil(keyboardView: KeyboardView, editText: EditText) {
     fun hideKeyboard() {
         val visibility = keyboardView.visibility
         if (visibility == View.VISIBLE || visibility == View.INVISIBLE) {
-            keyboardView.visibility = View.GONE
+            keyboardView.visibility = View.INVISIBLE
         }
     }
 
     init {
         //setInputType为InputType.TYPE_NULL   不然会弹出系统键盘
         editText.inputType = InputType.TYPE_NULL
-        this.keyboardView = keyboardView
-        this.editText = editText
         this.keyboardView.setOnKeyboardActionListener(listener)
-        this.keyboardView.keyboard = Keyboard(editText.context, R.xml.keyboard)
+        this.keyboardView.keyboard = keyboard
         this.keyboardView.isEnabled = true
         this.keyboardView.isPreviewEnabled = false
     }
+
+
 }
