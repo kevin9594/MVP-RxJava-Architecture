@@ -15,7 +15,8 @@ import com.sample.mvp_rxjava_architecture.mvp.presenter.SignPresenter
 import com.sample.mvp_rxjava_architecture.util.KeyBoardUtil
 import kotlinx.android.synthetic.main.fragment_sign_in.*
 
-class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>(), SignContract.View, View.OnClickListener {
+class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>(), SignContract.View,
+    View.OnClickListener {
 
     companion object {
 
@@ -25,17 +26,27 @@ class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>()
 
     var count = 0
 
+    private var keyboard: KeyBoardUtil? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_sign_in, container, false)
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bt_sign_in.setOnClickListener(this)
         edit_text.setOnClickListener(this)
         edit_text2.setOnClickListener(this)
+        tv_close.setOnClickListener(this)
+
+        keyboard = KeyBoardUtil(kv_keyboard, ll_keyboard)
+
     }
 
 
@@ -46,7 +57,8 @@ class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>()
 
     @SuppressLint("SetTextI18n")
     override fun success(signBean: SignBean) {
-        tv_data.text = "姓名 : " + signBean.userName + "\n年齡 : " + signBean.age + "\nID : " + signBean.userId
+        tv_data.text =
+            "姓名 : " + signBean.userName + "\n年齡 : " + signBean.age + "\nID : " + signBean.userId
 
     }
 
@@ -61,18 +73,22 @@ class SignInFragment : BasePresenterFragment<SignContract.View, SignPresenter>()
         when (v) {
             bt_sign_in -> {
 
-                count++
-                edit_text.setText("$count")
+//                count++
+//                edit_text.setText("$count")
 
 //                mPresenter?.getData("Michael Jordan", "a123")
             }
-            edit_text -> {
-                Log.d("tag", "click")
-                KeyBoardUtil(kv_keyboard, edit_text).showKeyboard()
+
+            tv_close -> {
+                keyboard?.hideKeyboard()
             }
 
-            edit_text2 ->{
-                KeyBoardUtil(kv_keyboard, edit_text2).showKeyboard()
+            edit_text -> {
+                keyboard?.showKeyboard(edit_text)
+            }
+
+            edit_text2 -> {
+                keyboard?.showKeyboard(edit_text2)
             }
 
         }

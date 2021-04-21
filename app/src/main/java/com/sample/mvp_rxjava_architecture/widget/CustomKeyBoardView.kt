@@ -1,59 +1,62 @@
-package com.sample.mvp_rxjava_architecture.widget;
+package com.sample.mvp_rxjava_architecture.widget
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
-import android.util.AttributeSet;
-import com.sample.mvp_rxjava_architecture.R;
-import java.util.List;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.inputmethodservice.Keyboard
+import android.inputmethodservice.KeyboardView
+import android.util.AttributeSet
+import com.sample.mvp_rxjava_architecture.R
 
-@SuppressLint({"UseCompatLoadingForDrawables","DrawAllocation"})
-public class CustomKeyBoardView extends KeyboardView {
+@SuppressLint("UseCompatLoadingForDrawables", "DrawAllocation")
+class CustomKeyBoardView(context: Context?, attrs: AttributeSet?) : KeyboardView(context, attrs) {
 
-    public CustomKeyBoardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
         try {
-            List<Keyboard.Key> keys = getKeyboard().getKeys();
-            for (Keyboard.Key key : keys) {
+            val keys = keyboard.keys
+            for (key in keys) {
                 if (key.codes[0] == -100 || key.codes[0] == -1000 || key.codes[0] == -10000) {
-                    setDrawable(canvas, key, R.drawable.bg_keyboard_count);
+                    setDrawable(canvas, key, R.drawable.bg_keyboard_count)
                 } else if (key.codes[0] == -999) {
-                    setDrawable(canvas, key, R.drawable.bg_keyboard_delete);
+                    setDrawable(canvas, key, R.drawable.bg_keyboard_delete)
                 } else {
-                    setDrawable(canvas, key, R.drawable.bg_keyboard_number);
+                    setDrawable(canvas, key, R.drawable.bg_keyboard_number)
                 }
-                Paint paint = new Paint();
-                paint.setTextAlign(Paint.Align.CENTER);
-                paint.setTextSize(36);
-                paint.setColor(Color.BLACK);
+                val paint = Paint()
+                paint.textAlign = Paint.Align.CENTER
+                paint.textSize = 36f
+                paint.color = Color.BLACK
                 if (key.label != null) {
-                    canvas.drawText(key.label.toString(), key.x + (key.width / 2),
-                            key.y + (key.height / 2) + 14, paint);
+                    canvas.drawText(
+                        key.label.toString(), (key.x + key.width / 2).toFloat(), (
+                                key.y + key.height / 2 + 14).toFloat(), paint
+                    )
                 } else {
-                    key.icon.setBounds(key.x, key.y, key.x + key.width, key.y + key.height);
-                    key.icon.draw(canvas);
+                    val hMargin = key.width / 5
+                    val vMargin = key.height / (40 / 12)
+                    val left = key.x + hMargin
+                    val top = key.y + vMargin
+                    val right = key.x + key.width - hMargin
+                    val bottom = key.y + key.height - vMargin
+                    key.icon.setBounds(left, top, right, bottom)
+                    key.icon.draw(canvas)
                 }
-
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    private void setDrawable(Canvas canvas, Keyboard.Key key, int res) {
-        Drawable drawable = getResources().getDrawable(res);
-        drawable.setBounds(key.x, key.y, key.x + key.width, key.y + key.height);
-        drawable.draw(canvas);
+
+    private fun setDrawable(canvas: Canvas, key: Keyboard.Key, res: Int) {
+        val drawable = resources.getDrawable(res)
+        drawable.setBounds(key.x, key.y, key.x + key.width, key.y + key.height)
+        drawable.draw(canvas)
     }
+
 
 }

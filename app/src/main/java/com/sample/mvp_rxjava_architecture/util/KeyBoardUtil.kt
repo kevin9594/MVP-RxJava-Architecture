@@ -3,60 +3,88 @@ package com.sample.mvp_rxjava_architecture.util
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import com.sample.mvp_rxjava_architecture.R
 import com.sample.mvp_rxjava_architecture.widget.CustomKeyBoardView
 
-class KeyBoardUtil(private val keyboardView: CustomKeyBoardView, private val editText: EditText) {
+class KeyBoardUtil(private val keyboardView: CustomKeyBoardView, private val parent: View) :
+    OnKeyboardActionListener {
 
-    private val keyboard: Keyboard? = Keyboard(editText.context, R.xml.keyboard)
-    private val listener: OnKeyboardActionListener = object : OnKeyboardActionListener {
-        override fun swipeUp() {}
-        override fun swipeRight() {}
-        override fun swipeLeft() {}
-        override fun swipeDown() {}
-        override fun onText(text: CharSequence) {}
-        override fun onRelease(primaryCode: Int) {}
-        override fun onPress(primaryCode: Int) {}
-        override fun onKey(primaryCode: Int, keyCodes: IntArray) {
-            val editable = editText.text
-            val start = editText.selectionStart
-            when (primaryCode) {
-                Keyboard.KEYCODE_DELETE -> if (editable != null && editable.isNotEmpty()) {
-                    if (start > 0) {
-                        editable.delete(start - 1, start)
-                    }
+
+    init {
+        this.keyboardView.setOnKeyboardActionListener(this)
+        this.keyboardView.keyboard = Keyboard(keyboardView.context, R.xml.keyboard)
+        this.keyboardView.isEnabled = true
+        this.keyboardView.isPreviewEnabled = false
+    }
+
+
+    private lateinit var mEditText: EditText
+
+
+    fun showKeyboard(editText: EditText) {
+        this.mEditText = editText
+
+        //InputType.TYPE_NULL 禁止彈出系統鍵盤
+        mEditText.inputType = InputType.TYPE_NULL
+        parent.visibility = View.VISIBLE
+    }
+
+
+    fun hideKeyboard() {
+        parent.visibility = View.INVISIBLE
+    }
+
+
+    override fun onPress(primaryCode: Int) {}
+    override fun onRelease(primaryCode: Int) {}
+    override fun onText(text: CharSequence?) {}
+    override fun swipeLeft() {}
+    override fun swipeRight() {}
+    override fun swipeDown() {}
+    override fun swipeUp() {}
+
+
+    override fun onKey(primaryCode: Int, keyCodes: IntArray?) {
+        val editable = mEditText.text
+        val start = mEditText.selectionStart
+        when (primaryCode) {
+            -999 -> if (editable != null && editable.isNotEmpty()) {
+                if (start > 0) {
+                    editable.delete(start - 1, start)
                 }
-                Keyboard.KEYCODE_CANCEL -> keyboardView.visibility = View.GONE
-                else -> editable!!.insert(start, primaryCode.toChar().toString())
+            }
+
+            -100 -> plus(100)
+
+            -1000 -> plus(1000)
+
+            -10000 -> plus(10000)
+
+            48 -> {
+                if(editable.isNotEmpty()){
+                    editable.insert(start, primaryCode.toChar().toString())
+                }
+            }
+            -48 -> {
+               if(editable.isNotEmpty()){
+                   editable.insert(start, "00")
+               }
+            }
+
+            else -> {
+                editable.insert(start, primaryCode.toChar().toString())
             }
         }
     }
 
-    // Activity中获取焦点时调用，显示出键盘
-    fun showKeyboard() {
-        val visibility = keyboardView.visibility
-        if (visibility == View.GONE || visibility == View.INVISIBLE) {
-            keyboardView.visibility = View.VISIBLE
-        }
-    }
 
-    // 隐藏键盘
-    fun hideKeyboard() {
-        val visibility = keyboardView.visibility
-        if (visibility == View.VISIBLE || visibility == View.INVISIBLE) {
-            keyboardView.visibility = View.INVISIBLE
-        }
-    }
-
-    init {
-        //setInputType为InputType.TYPE_NULL   不然会弹出系统键盘
-        editText.inputType = InputType.TYPE_NULL
-        this.keyboardView.setOnKeyboardActionListener(listener)
-        this.keyboardView.keyboard = keyboard
-        this.keyboardView.isEnabled = true
-        this.keyboardView.isPreviewEnabled = false
+    private fun plus(count: Long) {
+        val input = if (mEditText.text.toString() == "") "0" else mEditText.text.toString()
+        mEditText.setText((input.toLong() + count).toString())
+        mEditText.setSelection(mEditText.text.length)
     }
 
 
